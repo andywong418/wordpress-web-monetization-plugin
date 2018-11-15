@@ -15,10 +15,15 @@ class WordPressWebMonetization
   }
 
   public function custom_js_register() {
+    wp_register_script('polyfill', 'https://polyfill.webmonetization.org/polyfill.js');
+    wp_register_script('coil', 'https://cdn.coil.com/donate.js');
     wp_register_script('inject', plugins_url( '/', __FILE__ ) . 'inject.js');
+    wp_enqueue_script('polyfill');
+    wp_enqueue_script('coil');
     wp_enqueue_script('inject');
     $dataToBePassed = array(
-     get_option('payment_pointer_option')
+     get_option('payment_pointer_option'),
+     get_option('add_coil_advert_option')
     );
     wp_localize_script( 'inject', 'php_vars', $dataToBePassed );
   }
@@ -62,7 +67,10 @@ class WebMonetizationSettingsPage
     public function create_admin_page()
     {
         // Set class property
-        $this->options = get_option( 'payment_pointer_option' );
+        $this->options = array(
+            'payment_pointer'=> get_option( 'payment_pointer_option' ),
+            'add_coil_advert'=> get_option('add_coil_advert_option')
+        );
         ?>
         <div class="wrap">
             <h1>Web Monetization Settings</h1>
@@ -83,11 +91,6 @@ class WebMonetizationSettingsPage
      */
     public function page_init()
     {
-        register_setting(
-            'my_option_group', // Option group
-            'payment_pointer_option', // Option name
-            array( $this, 'sanitize' ) // Sanitize
-        );
 
         add_settings_section(
             'setting_section_id', // ID
@@ -103,6 +106,23 @@ class WebMonetizationSettingsPage
             'web-monetization-admin', // Page
             'setting_section_id' // Section
         );
+        add_settings_field(
+            'add_coil_advert',
+            'Advertise Coil',
+            array($this, 'add_coil_advert_callback'),
+            'web-monetization-admin',
+            'setting_section_id'
+        );
+        register_setting(
+            'my_option_group', // Option group
+            'payment_pointer_option', // Option name
+            array( $this, 'sanitize' ) // Sanitize
+        );
+        register_setting(
+            'my_option_group',
+            'add_coil_advert_option'
+        );
+        
     }
 
     /**
@@ -131,11 +151,22 @@ class WebMonetizationSettingsPage
     /**
      * Get the settings option array and print one of its values
      */
+    public function add_coil_advert_callback()
+    {
+        $options = get_option( 'add_coil_advert_option' );
+        echo "<script>console.log( \"PHP DEBUG: $options\" );</script>";
+        $html = '<input type="checkbox" id="add_coil_advert" name="add_coil_advert_option[add_coil_advert]" value="1"' . checked( 1, $options['add_coil_advert'], false ) . '/>';
+        $html .= '<label for="add_coil_advert">This displays a widget that advertises Coil to those who do not have a subscription.</label>';
+
+        echo $html;
+    }
+
     public function payment_pointer_callback()
     {
+        $options = get_option('payment_pointer_option');
         printf(
             '<input type="text" id="payment_pointer" name="payment_pointer_option[payment_pointer]" value="%s" />',
-            isset( $this->options['payment_pointer'] ) ? esc_attr( $this->options['payment_pointer']) : ''
+            isset( $this->options['payment_pointer'] ) ? esc_attr( $options['payment_pointer']) : ''
         );
     }
 
