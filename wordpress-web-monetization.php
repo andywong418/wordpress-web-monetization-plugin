@@ -165,7 +165,7 @@ class WebMonetizationSettingsPage
     {
         $options = get_option('payment_pointer_option');
         printf(
-            '<input type="text" id="payment_pointer" name="payment_pointer_option[payment_pointer]" value="%s" />',
+            '<input type="text" style="min-width: 300px;" id="payment_pointer" name="payment_pointer_option[payment_pointer]" value="%s" />',
             isset( $this->options['payment_pointer'] ) ? esc_attr( $options['payment_pointer']) : ''
         );
     }

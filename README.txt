@@ -10,9 +10,9 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 This plugin allows your Wordpress site to accept payments if the browser can inject payment.
 == Description ==
 
-This plugin allows Admin users to set a payment pointer where those with a browser extension (or native browser API) can send payments to the site.
+This plugin allows Admin users to set a payment pointer where those with a Coil handler or browser extension (or native browser API) can send payments to the site.
 
-Admins MUST set their payment pointer in the settings under 'Web Monetization Settings'
+Admins MUST set their payment pointer in the settings under 'Web Monetization Settings'. They can then choose whether or not to display a Coil widget to advertise web-monetization to non-Coil subscribers.
 
 
 = Contact: =
